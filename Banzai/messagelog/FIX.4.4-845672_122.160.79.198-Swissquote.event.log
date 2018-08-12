@@ -1,0 +1,99 @@
+20180727-11:52:50: Session FIX.4.4:845672/122.160.79.198->Swissquote schedule is daily, 00:00:00 UTC - 00:00:00 UTC (daily, 00:00:00 UTC - 00:00:00 UTC)
+20180727-11:52:50: Created session: FIX.4.4:845672/122.160.79.198->Swissquote
+20180727-11:52:54: Initiated logon request
+20180727-11:52:54: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20180727-11:52:54: Received logon response
+20180727-12:26:58: Session FIX.4.4:845672/122.160.79.198->Swissquote schedule is daily, 00:00:00 UTC - 00:00:00 UTC (daily, 00:00:00 UTC - 00:00:00 UTC)
+20180727-12:26:58: Created session: FIX.4.4:845672/122.160.79.198->Swissquote
+20180727-12:27:02: Initiated logon request
+20180727-12:59:50: Session FIX.4.4:845672/122.160.79.198->Swissquote schedule is daily, 00:00:00 UTC - 00:00:00 UTC (daily, 00:00:00 UTC - 00:00:00 UTC)
+20180727-12:59:50: Created session: FIX.4.4:845672/122.160.79.198->Swissquote
+20180727-12:59:54: Initiated logon request
+20180727-12:59:54: Disconnecting
+20180727-13:00:44: Initiated logon request
+20180727-13:00:44: Disconnecting
+20180727-13:02:21: Session FIX.4.4:845672/122.160.79.198->Swissquote schedule is daily, 00:00:00 UTC - 00:00:00 UTC (daily, 00:00:00 UTC - 00:00:00 UTC)
+20180727-13:02:21: Created session: FIX.4.4:845672/122.160.79.198->Swissquote
+20180727-13:02:23: Initiated logon request
+20180727-13:02:24: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20180727-13:02:24: Received logon response
+20180727-13:03:58: Sent test request TEST
+20180727-13:04:25: Timed out waiting for heartbeat
+20180727-13:04:25: Disconnecting
+20180727-13:04:26: Initiated logon request
+20180727-13:04:27: Disconnecting
+20180727-13:05:17: Initiated logon request
+20180727-13:05:18: Disconnecting
+20180727-13:05:48: Session FIX.4.4:845672/122.160.79.198->Swissquote schedule is daily, 00:00:00 UTC - 00:00:00 UTC (daily, 00:00:00 UTC - 00:00:00 UTC)
+20180727-13:05:48: Created session: FIX.4.4:845672/122.160.79.198->Swissquote
+20180727-13:05:52: Initiated logon request
+20180727-13:05:52: Disconnecting
+20180727-13:06:42: Initiated logon request
+20180727-13:06:42: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20180727-13:06:42: Received logon response
+20180727-13:10:58: Disconnecting
+20180727-13:11:00: Initiated logon request
+20180727-13:11:00: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20180727-13:11:00: Received logon response
+20180727-13:16:33: Disconnecting
+20180727-13:16:35: Initiated logon request
+20180727-13:16:35: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20180727-13:16:35: Received logon response
+20180727-13:21:40: Disconnecting
+20180727-13:21:42: Initiated logon request
+20180727-13:21:42: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20180727-13:21:42: Received logon response
+20180727-13:27:47: Disconnecting
+20180727-13:27:48: Initiated logon request
+20180727-13:27:48: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20180727-13:27:48: Received logon response
+20180727-13:35:21: Session FIX.4.4:845672/122.160.79.198->Swissquote schedule is daily, 00:00:00 UTC - 00:00:00 UTC (daily, 00:00:00 UTC - 00:00:00 UTC)
+20180727-13:35:21: Created session: FIX.4.4:845672/122.160.79.198->Swissquote
+20180727-13:35:25: Initiated logon request
+20180727-13:35:25: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20180727-13:35:25: Received logon response
+20180727-13:39:12: Disconnecting
+20180727-13:39:14: Initiated logon request
+20180727-13:39:14: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20180727-13:39:14: Received logon response
+20180727-13:41:46: Disconnecting
+20180727-13:41:47: Initiated logon request
+20180727-13:41:47: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20180727-13:41:47: Received logon response
+20180811-05:23:26: Session FIX.4.4:845672/122.160.79.198->Swissquote schedule is daily, 00:00:00 UTC - 00:00:00 UTC (daily, 00:00:00 UTC - 00:00:00 UTC)
+20180811-05:23:26: Session state is not current; resetting FIX.4.4:845672/122.160.79.198->Swissquote
+20180811-05:23:26: Created session: FIX.4.4:845672/122.160.79.198->Swissquote
+20180811-05:23:31: Initiated logon request
+20180811-05:23:31: Disconnecting
+20180811-05:24:21: Initiated logon request
+20180811-05:24:21: Disconnecting
+20180811-05:25:12: Initiated logon request
+20180811-05:25:12: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20180811-05:25:12: Received logon response
+20180811-05:53:47: Session FIX.4.4:845672/122.160.79.198->Swissquote schedule is daily, 00:00:00 UTC - 00:00:00 UTC (daily, 00:00:00 UTC - 00:00:00 UTC)
+20180811-05:53:47: Created session: FIX.4.4:845672/122.160.79.198->Swissquote
+20180811-05:54:03: Initiated logon request
+20180811-05:54:04: Disconnecting
+20180811-05:54:52: Initiated logon request
+20180811-05:54:52: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20180811-05:54:52: Received logon response
+20180811-05:57:18: Session FIX.4.4:845672/122.160.79.198->Swissquote schedule is daily, 00:00:00 UTC - 00:00:00 UTC (daily, 00:00:00 UTC - 00:00:00 UTC)
+20180811-05:57:18: Created session: FIX.4.4:845672/122.160.79.198->Swissquote
+20180811-05:57:21: Initiated logon request
+20180811-05:57:21: Disconnecting
+20180811-05:58:26: Session FIX.4.4:845672/122.160.79.198->Swissquote schedule is daily, 00:00:00 UTC - 00:00:00 UTC (daily, 00:00:00 UTC - 00:00:00 UTC)
+20180811-05:58:26: Created session: FIX.4.4:845672/122.160.79.198->Swissquote
+20180811-05:58:29: Initiated logon request
+20180811-05:58:29: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20180811-05:58:29: Received logon response
+20180811-06:13:20: Session FIX.4.4:845672/122.160.79.198->Swissquote schedule is daily, 00:00:00 UTC - 00:00:00 UTC (daily, 00:00:00 UTC - 00:00:00 UTC)
+20180811-06:13:20: Created session: FIX.4.4:845672/122.160.79.198->Swissquote
+20180811-06:13:24: Initiated logon request
+20180811-06:13:24: Disconnecting
+20180811-06:38:02: Session FIX.4.4:845672/122.160.79.198->Swissquote schedule is daily, 00:00:00 UTC - 00:00:00 UTC (daily, 00:00:00 UTC - 00:00:00 UTC)
+20180811-06:38:02: Created session: FIX.4.4:845672/122.160.79.198->Swissquote
+20180811-06:38:07: Initiated logon request
+20180811-06:38:07: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20180811-06:38:07: Received logon response
+20180811-08:36:05: Session FIX.4.4:845672/122.160.79.198->Swissquote schedule is daily, 00:00:00 UTC - 00:00:00 UTC (daily, 00:00:00 UTC - 00:00:00 UTC)
+20180811-08:36:05: Created session: FIX.4.4:845672/122.160.79.198->Swissquote
