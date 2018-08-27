@@ -1,0 +1,13 @@
+quickfix
+quickfix.codegen
+quickfix.field
+quickfix.field.converter
+quickfix.fix40
+quickfix.fix41
+quickfix.fix42
+quickfix.fix43
+quickfix.fix44
+quickfix.mina
+quickfix.mina.acceptor
+quickfix.mina.initiator
+quickfix.mina.message
