@@ -7,6 +7,8 @@ import java.io.InputStream;
 import java.util.Iterator;
 import java.util.concurrent.CountDownLatch;
 
+import com.application.WealthBridgeApplication;
+
 import quickfix.DefaultMessageFactory;
 import quickfix.FileStoreFactory;
 import quickfix.Initiator;
@@ -18,9 +20,6 @@ import quickfix.Session;
 import quickfix.SessionID;
 import quickfix.SessionSettings;
 import quickfix.SocketInitiator;
-
-import com.application.WealthBridgeApplication;
-import com.connector.QuickFixConnector;
 
 /****
  * 
@@ -39,9 +38,8 @@ public class WealthBridge {
 
 	private boolean initiatorStarted = false;
 	private Initiator initiator = null;
-	private static WealthBridge wealthBridge;
+	private static WealthBridge wealthBridge = null;
 	private static final CountDownLatch shutdownLatch = new CountDownLatch(1);
-	private QuickFixConnector connector;
 	
 	
 	/**
@@ -70,7 +68,6 @@ public class WealthBridge {
 		MessageFactory messageFactory = new DefaultMessageFactory();
 
 		initiator = new SocketInitiator(application, messageStoreFactory, settings, logFactory, messageFactory);
-		connector = new QuickFixConnector(application);
 	}
 
 	/***
@@ -82,7 +79,7 @@ public class WealthBridge {
 				initiator.start();
 				initiatorStarted = true;
 			} catch (Exception e) {
-				// log.error("Logon failed", e);
+				System.out.println(e);
 			}
 		} else {
 			Iterator<SessionID> sessionIds = initiator.getSessions().iterator();

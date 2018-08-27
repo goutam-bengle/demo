@@ -1,8 +1,17 @@
 package com.application;
 
-import java.util.HashSet;
-import java.util.Observable;
-import java.util.Observer;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import com.order.Order;
+import com.order.OrderSide;
+import com.order.OrderTIF;
+import com.order.OrderType;
 
 import quickfix.Application;
 import quickfix.DoNotSend;
@@ -17,7 +26,6 @@ import quickfix.SessionNotFound;
 import quickfix.UnsupportedMessageType;
 
 public class WealthBridgeApplication implements Application {
-	private ObservableLogon observableLogon = new ObservableLogon();
 
 	@Override
 	public void fromAdmin(Message arg0, SessionID arg1) throws FieldNotFound, IncorrectDataFormat, IncorrectTagValue, RejectLogon {
@@ -39,7 +47,7 @@ public class WealthBridgeApplication implements Application {
 
 	@Override
 	public void onLogon(SessionID arg0) {
-		// TODO Auto-generated method stub
+		System.out.println("Hi"+arg0);
 
 	}
 
@@ -69,29 +77,66 @@ public class WealthBridgeApplication implements Application {
 		}
 	}
 
-	public void addLogonObserver(Observer observer) {
-		observableLogon.addObserver(observer);
-	}
+	
+	private void sendOrderData(SessionID sessionId) {
+		 String sql = "SELECT * FROM Orders";
+		System.out.println("read data");
+		 // Create a variable for the connection string.
+			String connectionUrl = "jdbc:sqlserver://localhost:1433;" +
+			        "databaseName=quickfix;";
+			String username = "sa";
+			String password = "aloktest";
 
-	public void deleteLogonObserver(Observer observer) {
-		observableLogon.deleteObserver(observer);
-	}
+			// Declare the JDBC objects.
+			Connection conn = null;
+			try {
+			    // Establish the connection.
+			    Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+			    conn = DriverManager.getConnection(connectionUrl, username, password);
+			    Statement statement = conn.createStatement();
+			    ResultSet result = statement.executeQuery(sql);
 
-	private static class ObservableLogon extends Observable {
-		private HashSet<SessionID> set = new HashSet<SessionID>();
+			    int count = 0;
 
-		public void logon(SessionID sessionID) {
-			set.add(sessionID);
-			setChanged();
-			notifyObservers(new LogonEvent(sessionID, true));
-			clearChanged();
+			    while (result.next()){
+			            String OrdType = result.getString("OrdType");
+			            String Side = result.getString("Side");
+			            String Symbol = result.getString("Symbol");
+			            String Account = result.getString("Account");
+			            String ISIN = result.getString("ISIN");
+			            String SecurityIDSource = result.getString("SecurityIDSource");
+			            char HandlInst = result.getString("HandlInst").charAt(0);
+			            String ExDestination = result.getString("ExDestination");
+			            String Currency = result.getString("Currency");
+			            double Price = result.getDouble("Price");
+			            int Quantity = result.getInt("Quantity");
+
+			            Order order = new Order();
+			                if ("2".equals(OrdType))
+			                    order.setType(OrderType.LIMIT);
+			                if ("1".equals(Side))
+			                    order.setSide(OrderSide.BUY);
+			                else
+			                    order.setSide(OrderSide.SELL);
+			                order.setSymbol(Symbol);
+			                order.setAccount(Account);
+			                order.setISIN(ISIN);
+			                order.setSecurityIDSource(SecurityIDSource);
+			                order.setHandlInst(HandlInst);
+			                order.setExDestination(ExDestination);
+			                order.setCurrency(Currency);
+			                order.setLimit(Price);
+			                order.setTIF(OrderTIF.DAY);
+			                order.setQuantity(Quantity);
+			                order.setSessionID(sessionId);
+			                application.send(order);   
+			                try{Thread.sleep(30000);}catch(InterruptedException exc){System.out.println(exc);}
+			    }
+			}
+			catch (SQLException ex) {
+			ex.printStackTrace();
+			} catch (ClassNotFoundException ex) {
+			}
 		}
 
-		public void logoff(SessionID sessionID) {
-			set.remove(sessionID);
-			setChanged();
-			notifyObservers(new LogonEvent(sessionID, false));
-			clearChanged();
-		}
-	}
 }
