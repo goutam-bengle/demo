@@ -31,16 +31,13 @@ import quickfix.SessionSettings;
  */
 public class QuickFixConnector implements Observer {
 
-	private SessionID sessionID;
-	private SessionSettings settings;
+	private static SessionSettings settings;
 	
 	WealthBridgeApplication application;
 	private final Logger log = LoggerFactory.getLogger(getClass());	
 	
 
-	public SessionID getSessionID() {
-		return sessionID;
-	}
+
 
     protected SessionSettings getSettings() {
         return settings;
@@ -79,19 +76,19 @@ public class QuickFixConnector implements Observer {
 	 * @throws FieldConvertError
 	 */
     private void sendOrderData(SessionID sessionId) throws ConfigError, FieldConvertError {
-        String sql = settings.getString(sessionID, "JdbcSQL");
+        String sql = settings.getString(sessionId, "JdbcSQL");
         System.out.println("read data sql " + sql);
         // Create a variable for the connection string.
-        String connectionUrl = settings.getString(sessionID, "JdbcURL");
+        String connectionUrl = settings.getString(sessionId, "JdbcURL");
         // jdbc:sqlserver://localhost:1433;databaseName=quickfix;
-        String username = settings.getString(sessionID, "JdbcUser");
-        String password = settings.getString(sessionID, "JdbcPassword");
+        String username = settings.getString(sessionId, "JdbcUser");
+        String password = settings.getString(sessionId, "JdbcPassword");
 
         // Declare the JDBC objects.
         Connection conn = null;
         try {
             // Establish the connection.
-            Class.forName(settings.getString(sessionID, "JdbcDriver"));
+            Class.forName(settings.getString(sessionId, "JdbcDriver"));
             conn = DriverManager.getConnection(connectionUrl, username, password);
             Statement statement = conn.createStatement();
             ResultSet result = statement.executeQuery(sql);

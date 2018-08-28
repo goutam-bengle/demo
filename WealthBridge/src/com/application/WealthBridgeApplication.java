@@ -78,7 +78,7 @@ public class WealthBridgeApplication implements Application {
 	@Override
 	public void onLogon(SessionID arg0) {
 	    observableLogon.logon(arg0);
-		System.out.println("Hi"+arg0);
+		System.out.println("Session created "+arg0);
 
 	}
 
