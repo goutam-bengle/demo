@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.concurrent.CountDownLatch;
 
 import com.application.WealthBridgeApplication;
+import com.connector.QuickFixConnector;
 
 import quickfix.DefaultMessageFactory;
 import quickfix.FileStoreFactory;
@@ -40,6 +41,7 @@ public class WealthBridge {
 	private Initiator initiator = null;
 	private static WealthBridge wealthBridge = null;
 	private static final CountDownLatch shutdownLatch = new CountDownLatch(1);
+	private static QuickFixConnector quickFixConnector = null;
 	
 	
 	/**
@@ -68,6 +70,7 @@ public class WealthBridge {
 		MessageFactory messageFactory = new DefaultMessageFactory();
 
 		initiator = new SocketInitiator(application, messageStoreFactory, settings, logFactory, messageFactory);
+		quickFixConnector = new QuickFixConnector(application , settings);
 	}
 
 	/***
