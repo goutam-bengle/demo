@@ -88,7 +88,6 @@ public class QuickFixConnector implements Observer {
             statement = conn.createStatement();
             ResultSet result = statement.executeQuery(sql);
 
-            int count = 0;
 
             while (result.next()) {
                 String ordType = result.getString("OrdType");
@@ -102,6 +101,7 @@ public class QuickFixConnector implements Observer {
                 String currency = result.getString("Currency");
                 double price = result.getDouble("Price");
                 int quantity = result.getInt("Quantity");
+                int id = result.getInt("Id");
 
                 Order order = new Order();
                 if ("2".equals(ordType))
@@ -121,6 +121,7 @@ public class QuickFixConnector implements Observer {
                 order.setTIF(OrderTIF.DAY);
                 order.setQuantity(quantity);
                 order.setSessionID(sessionId);
+                order.setOrderId(id);
                 application.send(order);
                 try {
                     Thread.sleep(30000);
@@ -147,6 +148,7 @@ public class QuickFixConnector implements Observer {
                 }
             }
             Session.lookupSession(sessionId).logout("user requested");
+            System.exit(0);
         }
     }
 	   

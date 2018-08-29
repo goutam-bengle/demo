@@ -46,9 +46,16 @@ public class Order implements Cloneable {
     private char HandlInst = '1';
     private String ExDestination = "XNYC";
     private String Currency = "USD";
-    private double Price = 0; 
-
-    public Order() {
+    private double Price = 0;
+    private int orderId = 0;
+    
+    public int getOrderId() {
+		return orderId;
+	}
+	public void setOrderId(int orderId) {
+		this.orderId = orderId;
+	}
+	public Order() {
         ID = generateID();
     }
     public Order(String ID) {

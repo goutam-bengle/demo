@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Observable;
@@ -73,7 +72,7 @@ public class WealthBridgeApplication implements Application {
 
 	@Override
 	public void fromApp(Message message, SessionID sessionID) throws FieldNotFound, IncorrectDataFormat, IncorrectTagValue, UnsupportedMessageType {
-		updateOrder(message, sessionID);
+		//updateOrder(message, sessionID);
 
 	}
 
@@ -164,15 +163,13 @@ public class WealthBridgeApplication implements Application {
         }
     }
    
-    private void updateOrder(Message message, SessionID sessionID) {
+    private void updateOrder(String clId, SessionID sessionID, int orderId) {
 
         // Declare the JDBC objects.
         Connection conn = null;
         PreparedStatement preparedStmt = null;
         
         try {
-            String clOrdId = message.getField(new ClOrdID()).getValue();
-            
             String sql = settings.getString(sessionID, "updateJdbcSQL");
             System.out.println("read data update sql " + sql);
             // Create a variable for the connection string.
@@ -185,8 +182,8 @@ public class WealthBridgeApplication implements Application {
             Class.forName(settings.getString(sessionID, "JdbcDriver"));
             conn = DriverManager.getConnection(connectionUrl, username, password);
             preparedStmt = conn.prepareStatement(sql);
-            preparedStmt.setString(1, clOrdId);
-            preparedStmt.setString(2, "Fred");
+            preparedStmt.setString(1, clId);
+            preparedStmt.setInt(2, orderId);
 
             // execute the java preparedstatement
             preparedStmt.executeUpdate();
@@ -198,8 +195,6 @@ public class WealthBridgeApplication implements Application {
         } catch (ConfigError e) {
             e.printStackTrace();
         } catch (FieldConvertError e) {
-            e.printStackTrace();
-        } catch (FieldNotFound e) {
             e.printStackTrace();
         } finally {
             if (conn != null) {
@@ -278,73 +273,13 @@ public class WealthBridgeApplication implements Application {
                 typeToFIXType(order.getType()));
         newOrderSingle.set(new OrderQty(order.getQuantity()));
         newOrderSingle.set(new Symbol(order.getSymbol()));
-        // newOrderSingle.set(new SecurityID ("US0605051046"));
         newOrderSingle.set(new SecurityIDSource(order.getSecurityIDSource()));
         newOrderSingle.set(new HandlInst(order.getHandlInst()));
         newOrderSingle.set(new Account(order.getAccount()));
         newOrderSingle.set(new ExDestination(order.getExDestination()));
         newOrderSingle.setField(new StringField(15, order.getCurrency()));
-        // newOrderSingle.setField(new StringField(40,"6"));//For OrderType=6
-        // test case
-        // newOrderSingle.setField(new StringField(100,"XNYS"));
         send(populateOrder(order, newOrderSingle), order.getSessionID());
-        // break;
-        /*
-         * case 2: // Cancel String id = order.generateID();
-         * quickfix.fix44.OrderCancelRequest message = new
-         * quickfix.fix44.OrderCancelRequest( new OrigClOrdID(ordId), new
-         * ClOrdID(id), sideToFIXSide(order.getSide()), new TransactTime());
-         * message.setField(new OrderQty(order.getQuantity()));
-         * message.setField(new Symbol(order.getSymbol())); message.setField(new
-         * Account(account)); send(message, order.getSessionID()); break; case
-         * 3://Place an order with qty=2, then modify qty=8, and modify qty=4
-         * ordId = order.getID(); quickfix.fix44.NewOrderSingle
-         * newOrderSingleLimit = new quickfix.fix44.NewOrderSingle( new
-         * ClOrdID(order.getID()), sideToFIXSide(order.getSide()), new
-         * TransactTime(), typeToFIXType(order.getType()));
-         * newOrderSingleLimit.set(new OrderQty(order.getQuantity()));
-         * newOrderSingleLimit.set(new Symbol(order.getSymbol()));
-         * newOrderSingleLimit.set(new SecurityID ("US0605051046"));
-         * newOrderSingleLimit.set(new SecurityIDSource ("4"));
-         * newOrderSingleLimit.set(new HandlInst('1'));
-         * newOrderSingleLimit.set(new Account(account));
-         * newOrderSingleLimit.set(new ExDestination("XNYS"));
-         * newOrderSingleLimit.setField(new StringField(15,"USD"));
-         * //newOrderSingle.setField(new StringField(100,"XNYS"));
-         * send(populateOrder(order, newOrderSingleLimit),
-         * order.getSessionID()); break; case 4: // MODIFY to 8 for rejection
-         * Order newOrder = orderTableModel.getOrder(message.getField(new
-         * ClOrdID()).getValue()); String id2 = newOrder.generateID();
-         * quickfix.fix44.OrderCancelReplaceRequest message2 = new
-         * quickfix.fix44.OrderCancelReplaceRequest( new OrigClOrdID(ordId), new
-         * ClOrdID(id2), sideToFIXSide(order.getSide()), new TransactTime(),
-         * typeToFIXType(order.getType()));
-         * 
-         * quickfix.fix42.OrderCancelReplaceRequest message = new
-         * quickfix.fix42.OrderCancelReplaceRequest( new
-         * OrigClOrdID(order.getID()), new ClOrdID(newOrder.getID()), new
-         * HandlInst('1'), new Symbol(order.getSymbol()),
-         * sideToFIXSide(order.getSide()), new TransactTime(),
-         * typeToFIXType(order.getType()));
-         * 
-         * orderTableModel.addID(order, newOrder.getID());
-         * send(populateCancelReplace(order, newOrder, message),
-         * order.getSessionID()); message.setField(new
-         * OrderQty(order.getQuantity())); message.setField(new
-         * Symbol(order.getSymbol())); message.setField(new Account(account));
-         * newOrderSingleLimit.set(new OrderQty(order.getQuantity()));
-         * newOrderSingleLimit.set(new Symbol(order.getSymbol()));
-         * newOrderSingleLimit.set(new SecurityID ("US0605051046"));
-         * newOrderSingleLimit.set(new SecurityIDSource ("4"));
-         * newOrderSingleLimit.set(new HandlInst('1'));
-         * newOrderSingleLimit.set(new Account(account));
-         * newOrderSingleLimit.set(new ExDestination("XNYS"));
-         * newOrderSingleLimit.setField(new StringField(15,"USD"));
-         * //newOrderSingle.setField(new StringField(100,"XNYS"));
-         * send(populateOrder(order, newOrderSingleLimit),
-         * order.getSessionID()); break;
-         */
-        // }
+        updateOrder(order.getID(), order.getSessionID(), order.getOrderId());
     }
     
     private static class ObservableLogon extends Observable {
