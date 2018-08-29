@@ -2,7 +2,7 @@ package com.application;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
@@ -10,13 +10,10 @@ import java.util.HashSet;
 import java.util.Observable;
 import java.util.Observer;
 
-import com.order.Order;
-import com.order.OrderSide;
-import com.order.OrderTIF;
-import com.order.OrderType;
-
 import quickfix.Application;
+import quickfix.ConfigError;
 import quickfix.DoNotSend;
+import quickfix.FieldConvertError;
 import quickfix.FieldNotFound;
 import quickfix.IncorrectDataFormat;
 import quickfix.IncorrectTagValue;
@@ -25,6 +22,7 @@ import quickfix.RejectLogon;
 import quickfix.Session;
 import quickfix.SessionID;
 import quickfix.SessionNotFound;
+import quickfix.SessionSettings;
 import quickfix.StringField;
 import quickfix.UnsupportedMessageType;
 import quickfix.field.Account;
@@ -43,9 +41,15 @@ import quickfix.field.Symbol;
 import quickfix.field.TimeInForce;
 import quickfix.field.TransactTime;
 
+import com.order.Order;
+import com.order.OrderSide;
+import com.order.OrderTIF;
+import com.order.OrderType;
+
 public class WealthBridgeApplication implements Application {
 
     String  ordId;
+    private SessionSettings settings;
     private ObservableOrder observableOrder = new ObservableOrder();
     private ObservableLogon observableLogon = new ObservableLogon();
     private boolean isAvailable = true;
@@ -57,15 +61,19 @@ public class WealthBridgeApplication implements Application {
     static private TwoWayMap tifMap = new TwoWayMap();
     static private HashMap<SessionID, HashSet<ExecID>> execIDs = new HashMap<SessionID, HashSet<ExecID>>();
     
-	@Override
+	public WealthBridgeApplication(SessionSettings pSettings) {
+	    this.settings = pSettings;
+    }
+
+    @Override
 	public void fromAdmin(Message arg0, SessionID arg1) throws FieldNotFound, IncorrectDataFormat, IncorrectTagValue, RejectLogon {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void fromApp(Message arg0, SessionID arg1) throws FieldNotFound, IncorrectDataFormat, IncorrectTagValue, UnsupportedMessageType {
-		// TODO Auto-generated method stub
+	public void fromApp(Message message, SessionID sessionID) throws FieldNotFound, IncorrectDataFormat, IncorrectTagValue, UnsupportedMessageType {
+		updateOrder(message, sessionID);
 
 	}
 
@@ -153,6 +161,61 @@ public class WealthBridgeApplication implements Application {
             setChanged();
             notifyObservers(order);
             clearChanged();
+        }
+    }
+   
+    private void updateOrder(Message message, SessionID sessionID) {
+
+        // Declare the JDBC objects.
+        Connection conn = null;
+        PreparedStatement preparedStmt = null;
+        
+        try {
+            String clOrdId = message.getField(new ClOrdID()).getValue();
+            
+            String sql = settings.getString(sessionID, "updateJdbcSQL");
+            System.out.println("read data update sql " + sql);
+            // Create a variable for the connection string.
+            String connectionUrl = settings.getString(sessionID, "JdbcURL");
+
+            String username = settings.getString(sessionID, "JdbcUser");
+            String password = settings.getString(sessionID, "JdbcPassword");
+
+            // Establish the connection.
+            Class.forName(settings.getString(sessionID, "JdbcDriver"));
+            conn = DriverManager.getConnection(connectionUrl, username, password);
+            preparedStmt = conn.prepareStatement(sql);
+            preparedStmt.setString(1, clOrdId);
+            preparedStmt.setString(2, "Fred");
+
+            // execute the java preparedstatement
+            preparedStmt.executeUpdate();
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } catch (ClassNotFoundException ex) {
+            ex.printStackTrace();
+        } catch (ConfigError e) {
+            e.printStackTrace();
+        } catch (FieldConvertError e) {
+            e.printStackTrace();
+        } catch (FieldNotFound e) {
+            e.printStackTrace();
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (preparedStmt != null) {
+                try {
+                    preparedStmt.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
     

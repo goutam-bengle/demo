@@ -64,7 +64,7 @@ public class WealthBridge {
 		inputStream.close();
 		boolean logHeartbeats = Boolean.valueOf(System.getProperty("logHeartbeats", "true")).booleanValue();
 
-		WealthBridgeApplication application = new WealthBridgeApplication();
+		WealthBridgeApplication application = new WealthBridgeApplication(settings);
 		MessageStoreFactory messageStoreFactory = new FileStoreFactory(settings);
 		LogFactory logFactory = new JdbcLogFactory(settings);
 		MessageFactory messageFactory = new DefaultMessageFactory();

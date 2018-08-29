@@ -20,6 +20,7 @@ import com.order.OrderType;
 
 import quickfix.ConfigError;
 import quickfix.FieldConvertError;
+import quickfix.Session;
 import quickfix.SessionID;
 import quickfix.SessionSettings;
 
@@ -31,17 +32,10 @@ import quickfix.SessionSettings;
  */
 public class QuickFixConnector implements Observer {
 
-	private static SessionSettings settings;
+	private SessionSettings settings;
 	
 	WealthBridgeApplication application;
 	private final Logger log = LoggerFactory.getLogger(getClass());	
-	
-
-
-
-    protected SessionSettings getSettings() {
-        return settings;
-    }
 
 	public QuickFixConnector(WealthBridgeApplication app, SessionSettings settings) {
 		this.application = app;
@@ -80,51 +74,52 @@ public class QuickFixConnector implements Observer {
         System.out.println("read data sql " + sql);
         // Create a variable for the connection string.
         String connectionUrl = settings.getString(sessionId, "JdbcURL");
-        // jdbc:sqlserver://localhost:1433;databaseName=quickfix;
+
         String username = settings.getString(sessionId, "JdbcUser");
         String password = settings.getString(sessionId, "JdbcPassword");
 
         // Declare the JDBC objects.
         Connection conn = null;
+        Statement statement = null;
         try {
             // Establish the connection.
             Class.forName(settings.getString(sessionId, "JdbcDriver"));
             conn = DriverManager.getConnection(connectionUrl, username, password);
-            Statement statement = conn.createStatement();
+            statement = conn.createStatement();
             ResultSet result = statement.executeQuery(sql);
 
             int count = 0;
 
             while (result.next()) {
-                String OrdType = result.getString("OrdType");
-                String Side = result.getString("Side");
-                String Symbol = result.getString("Symbol");
-                String Account = result.getString("Account");
-                String ISIN = result.getString("ISIN");
-                String SecurityIDSource = result.getString("SecurityIDSource");
-                char HandlInst = result.getString("HandlInst").charAt(0);
-                String ExDestination = result.getString("ExDestination");
-                String Currency = result.getString("Currency");
-                double Price = result.getDouble("Price");
-                int Quantity = result.getInt("Quantity");
+                String ordType = result.getString("OrdType");
+                String side = result.getString("Side");
+                String symbol = result.getString("Symbol");
+                String account = result.getString("Account");
+                String isin = result.getString("ISIN");
+                String securityIDSource = result.getString("SecurityIDSource");
+                char handlInst = result.getString("HandlInst").charAt(0);
+                String exDestination = result.getString("ExDestination");
+                String currency = result.getString("Currency");
+                double price = result.getDouble("Price");
+                int quantity = result.getInt("Quantity");
 
                 Order order = new Order();
-                if ("2".equals(OrdType))
+                if ("2".equals(ordType))
                     order.setType(OrderType.LIMIT);
-                if ("1".equals(Side))
+                if ("1".equals(side))
                     order.setSide(OrderSide.BUY);
                 else
                     order.setSide(OrderSide.SELL);
-                order.setSymbol(Symbol);
-                order.setAccount(Account);
-                order.setISIN(ISIN);
-                order.setSecurityIDSource(SecurityIDSource);
-                order.setHandlInst(HandlInst);
-                order.setExDestination(ExDestination);
-                order.setCurrency(Currency);
-                order.setLimit(Price);
+                order.setSymbol(symbol);
+                order.setAccount(account);
+                order.setISIN(isin);
+                order.setSecurityIDSource(securityIDSource);
+                order.setHandlInst(handlInst);
+                order.setExDestination(exDestination);
+                order.setCurrency(currency);
+                order.setLimit(price);
                 order.setTIF(OrderTIF.DAY);
-                order.setQuantity(Quantity);
+                order.setQuantity(quantity);
                 order.setSessionID(sessionId);
                 application.send(order);
                 try {
@@ -136,6 +131,22 @@ public class QuickFixConnector implements Observer {
         } catch (SQLException ex) {
             ex.printStackTrace();
         } catch (ClassNotFoundException ex) {
+        } finally{
+            if(conn != null){
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(statement != null){
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            Session.lookupSession(sessionId).logout("user requested");
         }
     }
 	   
