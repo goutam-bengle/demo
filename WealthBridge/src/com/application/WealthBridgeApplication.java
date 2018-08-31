@@ -4,10 +4,12 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Observable;
 import java.util.Observer;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import quickfix.Application;
 import quickfix.ConfigError;
@@ -27,7 +29,6 @@ import quickfix.UnsupportedMessageType;
 import quickfix.field.Account;
 import quickfix.field.ClOrdID;
 import quickfix.field.ExDestination;
-import quickfix.field.ExecID;
 import quickfix.field.HandlInst;
 import quickfix.field.LocateReqd;
 import quickfix.field.OrdType;
@@ -46,6 +47,13 @@ import com.order.OrderSide;
 import com.order.OrderTIF;
 import com.order.OrderType;
 
+/**
+ * The wealthbridge application to handle all the operations 
+ * with quickfix engine.
+ * 
+ * @author Sterlite
+ *
+ */
 public class WealthBridgeApplication implements Application {
 
     String  ordId;
@@ -54,12 +62,12 @@ public class WealthBridgeApplication implements Application {
     private ObservableLogon observableLogon = new ObservableLogon();
     private boolean isAvailable = true;
     private boolean isMissingField;
+    private Logger log = LoggerFactory.getLogger(getClass());
     
     
     static private TwoWayMap sideMap = new TwoWayMap();
     static private TwoWayMap typeMap = new TwoWayMap();
     static private TwoWayMap tifMap = new TwoWayMap();
-    static private HashMap<SessionID, HashSet<ExecID>> execIDs = new HashMap<SessionID, HashSet<ExecID>>();
     
 	public WealthBridgeApplication(SessionSettings pSettings) {
 	    this.settings = pSettings;
@@ -86,8 +94,6 @@ public class WealthBridgeApplication implements Application {
 	@Override
 	public void onLogon(SessionID arg0) {
 	    observableLogon.logon(arg0);
-		System.out.println("Session created "+arg0);
-
 	}
 
 	@Override
@@ -164,6 +170,13 @@ public class WealthBridgeApplication implements Application {
         }
     }
    
+    /**
+     * Update order status and CLOrderID to the table
+     * 
+     * @param clId
+     * @param sessionID
+     * @param orderId
+     */
     private void updateOrder(String clId, SessionID sessionID, int orderId) {
 
         // Declare the JDBC objects.
@@ -172,7 +185,7 @@ public class WealthBridgeApplication implements Application {
         
         try {
             String sql = settings.getString(sessionID, "updateJdbcSQL");
-            System.out.println("read data update sql " + sql);
+            log.debug("updating Orders update sql"+sql);
             // Create a variable for the connection string.
             String connectionUrl = settings.getString(sessionID, "JdbcURL");
 
@@ -190,26 +203,26 @@ public class WealthBridgeApplication implements Application {
             preparedStmt.executeUpdate();
 
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            log.error("SQLException", ex);
         } catch (ClassNotFoundException ex) {
-            ex.printStackTrace();
+            log.error("SQLException", ex);
         } catch (ConfigError e) {
-            e.printStackTrace();
+            log.error("SQLException", e);
         } catch (FieldConvertError e) {
-            e.printStackTrace();
+            log.error("SQLException", e);
         } finally {
             if (conn != null) {
                 try {
                     conn.close();
                 } catch (SQLException e) {
-                    e.printStackTrace();
+                    log.error("SQLException", e);
                 }
             }
             if (preparedStmt != null) {
                 try {
                     preparedStmt.close();
                 } catch (SQLException e) {
-                    e.printStackTrace();
+                    log.error("SQLException", e);
                 }
             }
         }
@@ -281,9 +294,15 @@ public class WealthBridgeApplication implements Application {
         newOrderSingle.set(new ExDestination(order.getExDestination()));
         newOrderSingle.setField(new StringField(15, order.getCurrency()));
         send(populateOrder(order, newOrderSingle), order.getSessionID());
+        //Update the order details to database
         updateOrder(order.getID(), order.getSessionID(), order.getOrderId());
     }
     
+    /**
+     * 
+     * @author sterlite
+     *
+     */
     private static class ObservableLogon extends Observable {
         private HashSet<SessionID> set = new HashSet<SessionID>();
 
@@ -302,6 +321,12 @@ public class WealthBridgeApplication implements Application {
         }
     }
     
+    /**
+     * 
+     * @param order
+     * @param newOrderSingle
+     * @return
+     */
     public quickfix.Message populateOrder(Order order, quickfix.Message newOrderSingle) {
 
         OrderType type = order.getType();

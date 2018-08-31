@@ -25,53 +25,54 @@ import quickfix.SessionID;
 import quickfix.SessionSettings;
 
 /****
+ * Class will act as bridge between Database and QuickFixSever It serves the the
+ * data from Datasource once Server is connected.
  * 
  * @author Sterlite
- *Class will act as bridge between Database and QuickFixSever
- *It serves the the data from Datasource once Server is connected.
  */
 public class QuickFixConnector implements Observer {
 
-	private SessionSettings settings;
-	
-	WealthBridgeApplication application;
-	private final Logger log = LoggerFactory.getLogger(getClass());	
+    private SessionSettings settings;
 
-	public QuickFixConnector(WealthBridgeApplication app, SessionSettings settings) {
-		this.application = app;
-		this.settings = settings;
-		app.addLogonObserver(this);	
-	}
+    WealthBridgeApplication application;
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
-	@Override
+    public QuickFixConnector(WealthBridgeApplication app, SessionSettings settings) {
+        this.application = app;
+        this.settings = settings;
+        app.addLogonObserver(this);
+    }
+
+    @Override
     public void update(Observable o, Object arg) {
         LogonEvent logonEvent = (LogonEvent) arg;
         if (logonEvent.isLoggedOn()) {
             try {
                 sendOrderData(logonEvent.getSessionID());
             } catch (ConfigError e) {
-                e.printStackTrace();
+                log.error("ConfigError: ", e);
             } catch (FieldConvertError e) {
-                e.printStackTrace();
+                log.error("FieldConvertError: ", e);
             }
             log.debug("Logon SuccessFull with sessionId : " + logonEvent.getSessionID());
-            System.out.println("logon");
+            System.out.println("Logon Successfull");
         } else {
             log.debug("Logon failed with sessionId : " + logonEvent.getSessionID());
-            System.out.println("not loggedIn "+logonEvent.getSessionID());
+            System.out.println("Logon Failed");
         }
     }
 
-	/**
-	 * Pull the orderData from Database and send to QuickFix
-	 * 
-	 * @param sessionId
-	 * @throws ConfigError
-	 * @throws FieldConvertError
-	 */
+    /**
+     * Pull the orderData from Database and send to QuickFix
+     * 
+     * @param sessionId
+     * @throws ConfigError
+     * @throws FieldConvertError
+     */
     private void sendOrderData(SessionID sessionId) throws ConfigError, FieldConvertError {
         String sql = settings.getString(sessionId, "JdbcSQL");
-        System.out.println("read data sql " + sql);
+        log.debug("Reading data sql " + sql);
+        System.out.println("Reading data sql " + sql);
         // Create a variable for the connection string.
         String connectionUrl = settings.getString(sessionId, "JdbcURL");
 
@@ -87,8 +88,6 @@ public class QuickFixConnector implements Observer {
             conn = DriverManager.getConnection(connectionUrl, username, password);
             statement = conn.createStatement();
             ResultSet result = statement.executeQuery(sql);
-
-
             while (result.next()) {
                 String ordType = result.getString("OrdType");
                 String side = result.getString("Side");
@@ -130,26 +129,27 @@ public class QuickFixConnector implements Observer {
                 }
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            log.error(ex.getMessage());
         } catch (ClassNotFoundException ex) {
-        } finally{
-            if(conn != null){
+            log.error(ex.getMessage());
+        } finally {
+            if (conn != null) {
                 try {
                     conn.close();
                 } catch (SQLException e) {
-                    e.printStackTrace();
+                    log.error(e.getMessage());
                 }
             }
-            if(statement != null){
+            if (statement != null) {
                 try {
                     statement.close();
                 } catch (SQLException e) {
-                    e.printStackTrace();
+                    log.error(e.getMessage());
                 }
             }
             Session.lookupSession(sessionId).logout("user requested");
             System.exit(0);
         }
     }
-	   
+
 }

@@ -29,8 +29,6 @@ import quickfix.SocketInitiator;
  */
 public class WealthBridge {
 	
-	
-
 	/***
 	 * Will the application. Starting point.
 	 * 
@@ -52,9 +50,11 @@ public class WealthBridge {
 	public WealthBridge(String[] args) throws Exception {
 		InputStream inputStream = null;
 		if (args.length == 0) {
-			inputStream = new BufferedInputStream(new FileInputStream(new File("config/ApplicationConfiguration.cfg")));
+			//inputStream = new BufferedInputStream(new FileInputStream(new File("ApplicationConfiguration.cfg")));
+		    inputStream = getClass().getResourceAsStream("/ApplicationConfiguration.cfg");		    
+		    
 		} else if (args.length == 1) {
-			inputStream = new FileInputStream(args[0]);
+			inputStream = new BufferedInputStream(new FileInputStream(args[0]));
 		}
 		if (inputStream == null) {
 			System.out.println("usage: " + WealthBridge.class.getName() + " [configFile].");
@@ -108,7 +108,11 @@ public class WealthBridge {
 		shutdownLatch.countDown();
 	}
 
-
+    /**
+     * 
+     * @param args
+     * @throws Exception
+     */
 	public static void main(String[] args) throws Exception {
 		wealthBridge = new WealthBridge(args);
 		if (!System.getProperties().containsKey("openfix")) {
