@@ -33,6 +33,7 @@ import quickfix.field.LocateReqd;
 import quickfix.field.OrdType;
 import quickfix.field.OrderQty;
 import quickfix.field.Price;
+import quickfix.field.SecurityID;
 import quickfix.field.SecurityIDSource;
 import quickfix.field.Side;
 import quickfix.field.StopPx;
@@ -273,6 +274,7 @@ public class WealthBridgeApplication implements Application {
                 typeToFIXType(order.getType()));
         newOrderSingle.set(new OrderQty(order.getQuantity()));
         newOrderSingle.set(new Symbol(order.getSymbol()));
+        newOrderSingle.set(new SecurityID(order.getISIN()));
         newOrderSingle.set(new SecurityIDSource(order.getSecurityIDSource()));
         newOrderSingle.set(new HandlInst(order.getHandlInst()));
         newOrderSingle.set(new Account(order.getAccount()));

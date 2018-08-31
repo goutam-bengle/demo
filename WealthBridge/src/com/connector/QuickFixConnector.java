@@ -101,7 +101,7 @@ public class QuickFixConnector implements Observer {
                 String currency = result.getString("Currency");
                 double price = result.getDouble("Price");
                 int quantity = result.getInt("Quantity");
-                int id = result.getInt("Id");
+                int id = result.getInt("OrderId");
 
                 Order order = new Order();
                 if ("2".equals(ordType))
